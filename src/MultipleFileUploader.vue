@@ -246,21 +246,21 @@ export default {
 
       if (this.method === 'put' || this.method === 'post') {
         axios({ method: this.method, url: this.postURL, data: this.formData, headers: this.postHeader })
-          .then((response) => {
+          .then((_response) => {
             this.isLoaderVisible = false;
             // Show success message
             if (this.showHttpMessages)
-              this.successMsg = response.code + "." + this.successMessagePath;
+              this.successMsg = _response.code + "." + this.successMessagePath;
             // 呼叫父層方法
-            this.$emit('uploadSuccess', response)
+            this.$emit('uploadSuccess', _response)
             this.removeItems();
           })
-          .catch((error) => {
+          .catch((_error) => {
             this.isLoaderVisible = false;
             if (this.showHttpMessages)
-              this.errorMsg = error.code + "." + this.errorMessagePath;
+              this.errorMsg = _error.code + "." + this.errorMessagePath;
             // 呼叫父層方法
-            this.$emit('uploadError', response)
+            this.$emit('uploadError', _error)
             this.removeItems();
           });
       } else {
