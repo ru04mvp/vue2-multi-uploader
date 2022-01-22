@@ -250,7 +250,7 @@ export default {
             this.isLoaderVisible = false;
             // Show success message
             if (this.showHttpMessages)
-              this.successMsg = _response.code + "." + this.successMessagePath;
+              this.successMsg = '上傳成功: ' + JSON.stringify(_response)
             // 呼叫父層方法
             this.$emit('uploadSuccess', _response)
             this.removeItems();
@@ -258,7 +258,7 @@ export default {
           .catch((_error) => {
             this.isLoaderVisible = false;
             if (this.showHttpMessages)
-              this.errorMsg = _error.code + "." + this.errorMessagePath;
+              this.errorMsg = '上傳失敗: ' + JSON.stringify(_error)
             // 呼叫父層方法
             this.$emit('uploadError', _error)
             this.removeItems();
