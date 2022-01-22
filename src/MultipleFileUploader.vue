@@ -1,92 +1,68 @@
-<template>
-  <div class="uploadBox">
-    <h3>{{headerMessage}}</h3>
-    <form
-      role="form"
-      enctype="multipart/form-data"
-      @submit.prevent="onSubmit"
-    >
-      <div
-        class="uploadBoxMain"
-        v-if="!itemsAdded"
-      >
-        <div class="form-group">
-          <div
-            class="dropArea"
-            @ondragover="onChange"
-            :class="dragging ? 'dropAreaDragging' : ''"
-            @dragenter="dragging=true"
-            @dragend="dragging=false"
-            @dragleave="dragging=false"
-          >
-            <h3>{{dropAreaPrimaryMessage}}</h3>
-            <input
-              type="file"
-              id="items"
-              name="items[]"
-              required
-              multiple
-              @change="onChange"
-            >
-            <p class="help-block">{{dropAreaSecondaryMessage}}</p>
-          </div>
-        </div>
-      </div>
-      <div
-        class="uploadBoxMain"
-        v-else
-      >
-        <p><strong>{{fileNameMessage}}</strong></p>
-        <ol>
-          <li v-for="name in itemsNames">{{name}}</li>
-        </ol>
-        <p><strong>{{fileSizeMessage}}</strong></p>
-        <ol>
-          <li v-for="size in itemsSizes">{{size}}</li>
-        </ol>
-        <p><strong>{{totalFileMessage}}</strong> {{itemsAdded}}</p>
-        <p><strong>{{totalUploadSizeMessage}}</strong> {{itemsTotalSize}}</p>
-        <button @click="removeItems">{{removeFileMessage}}</button>
-        <div
-          class="loader"
-          v-if="isLoaderVisible"
-        >
-          <div class="loaderImg"></div>
-        </div>
-      </div>
-      <div>
-        <button
-          type="submit"
-          class="btn btn-primary btn-black btn-round"
-          :disabled="itemsAdded < minItems || itemsAdded > maxItems"
-        >
-          {{uploadButtonMessage}}
-        </button>
-        <button
-          type="button"
-          class="btn btn-default btn-round"
-          @click="removeItems"
-        >{{cancelButtonMessage}}</button>
-      </div>
-      <br>
-      <div
-        class="successMsg"
-        v-if="successMsg !== ''"
-      >{{successMsg}}</div>
-      <div
-        class="errorMsg"
-        v-if="errorMsg !== ''"
-      >{{fileUploadErrorMessage}}:<br>{{errorMsg}} <br>{{retryErrorMessage}}</div>
-      <div
-        class="errorMsg"
-        v-if="itemsAdded && itemsAdded < minItems"
-      >{{minFilesErrorMessage}}: {{minItems}}. <br>{{retryErrorMessage}} </div>
-      <div
-        class="errorMsg"
-        v-if="itemsAdded && itemsAdded > maxItems"
-      >{{maxFilesErrorMessage}}: {{maxItems}}. <br>{{retryErrorMessage}}</div>
-    </form>
-  </div>
+<template lang="pug">
+.uploadBox
+  h3 {{ headerMessage }}
+  form(role="form", enctype="multipart/form-data", @submit.prevent="onSubmit")
+    .uploadBoxMain(v-if="!itemsAdded")
+      .form-group
+        .dropArea(
+          @ondragover="onChange",
+          :class="dragging ? 'dropAreaDragging' : ''",
+          @dragenter="dragging = true",
+          @dragend="dragging = false",
+          @dragleave="dragging = false"
+        )
+          h3 {{ dropAreaPrimaryMessage }}
+          input#items(
+            type="file",
+            name="items[]",
+            required="",
+            multiple="",
+            @change="onChange"
+          )
+          p.help-block {{ dropAreaSecondaryMessage }}
+    .uploadBoxMain(v-else="")
+      p
+        strong {{ fileNameMessage }}
+      ol
+        li(v-for="name in itemsNames") {{ name }}
+      p
+        strong {{ fileSizeMessage }}
+      ol
+        li(v-for="size in itemsSizes") {{ size }}
+      p
+        strong {{ totalFileMessage }}
+        |
+        | {{ itemsAdded }}
+      p
+        strong {{ totalUploadSizeMessage }}
+        |
+        | {{ itemsTotalSize }}
+      button(@click="removeItems") {{ removeFileMessage }}
+      .loader(v-if="isLoaderVisible")
+        .loaderImg
+    div
+      button.btn.btn-primary.btn-black.btn-round(
+        type="submit",
+        :disabled="itemsAdded < minItems || itemsAdded > maxItems"
+      )
+        | {{ uploadButtonMessage }}
+      button.btn.btn-default.btn-round(type="button", @click="removeItems") {{ cancelButtonMessage }}
+    br
+    .successMsg(v-if="successMsg !== ''") {{ successMsg }}
+    .errorMsg(v-if="errorMsg !== ''")
+      | {{ fileUploadErrorMessage }}:
+      br
+      | {{ errorMsg }}
+      br
+      | {{ retryErrorMessage }}
+    .errorMsg(v-if="itemsAdded && itemsAdded < minItems")
+      | {{ minFilesErrorMessage }}: {{ minItems }}.
+      br
+      | {{ retryErrorMessage }}
+    .errorMsg(v-if="itemsAdded && itemsAdded > maxItems")
+      | {{ maxFilesErrorMessage }}: {{ maxItems }}.
+      br
+      | {{ retryErrorMessage }}
 </template>
 
 <script>
@@ -274,7 +250,7 @@ export default {
             this.isLoaderVisible = false;
             // Show success message
             if (this.showHttpMessages)
-              this.successMsg = response + "." + this.successMessagePath;
+              this.successMsg = response.code + "." + this.successMessagePath;
             // 呼叫父層方法
             this.$emit('uploadSuccess', response)
             this.removeItems();
@@ -282,7 +258,7 @@ export default {
           .catch((error) => {
             this.isLoaderVisible = false;
             if (this.showHttpMessages)
-              this.errorMsg = error + "." + this.errorMessagePath;
+              this.errorMsg = error.code + "." + this.errorMessagePath;
             // 呼叫父層方法
             this.$emit('uploadError', response)
             this.removeItems();
